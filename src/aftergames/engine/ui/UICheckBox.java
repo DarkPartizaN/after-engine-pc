@@ -1,7 +1,7 @@
 package aftergames.engine.ui;
 
 import aftergames.engine.render.Color;
-import aftergames.engine.render.Renderer;
+import aftergames.engine.render.RenderAPI;
 
 /**
  *
@@ -21,9 +21,9 @@ public class UICheckBox extends UIItem {
     }
 
     public void onDraw() {
-        Renderer.drawRect(x, y, width, height, background_color.mix(Color.white));
+        RenderAPI.drawRect(x, y, width, height, background_color.mix(Color.white));
 
-        if (checked) Renderer.fillRect(x + 2, y + 2, width - 4, height - 4, color);
+        if (checked) RenderAPI.fillRect(x + 2, y + 2, width - 4, height - 4, color);
     }
 
     public final void onClick() {

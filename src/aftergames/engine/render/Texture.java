@@ -3,8 +3,6 @@ package aftergames.engine.render;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL12.*;
 
-import aftergames.engine.utils.geom.Rect;
-
 /**
  *
  * @author KiQDominaN
@@ -44,11 +42,5 @@ public final class Texture {
 
     public void setWrapMode(int mode) {
         wrap_mode = mode;
-    }
-
-    public Rect getRegion(float x, float y, float x2, float y2) {
-        Rect tmp = new Rect(x, y, x2, y2);
-
-        return tmp;
     }
 }

@@ -3,7 +3,7 @@ package aftergames.engine;
 import static org.lwjgl.glfw.GLFW.*;
 
 import aftergames.engine.ai.Actor;
-import aftergames.engine.world.Entity;
+import aftergames.engine.render.Renderer;
 import aftergames.engine.world.World;
 
 /**
@@ -16,6 +16,7 @@ public class EngineAPI {
     //with safe access from game library
     //======================================
 
+    private static Renderer render;
     private static Engine engine;
 
     //================================
@@ -73,11 +74,6 @@ public class EngineAPI {
         return engine.getWorld().getActor();
     }
 
-    public static void addObject(Entity object) {
-        if (!engineCreated()) return;
-        engine.getWorld().addObject(object);
-    }
-
     //================================
     //UI
     //================================
@@ -86,5 +82,16 @@ public class EngineAPI {
             glfwSetInputMode(EngineRuntime.window_handle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         else
             glfwSetInputMode(EngineRuntime.window_handle, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+    }
+
+    //================================
+    //Renderer
+    //================================
+    public static void setRenderer(Renderer render) {
+        EngineAPI.render = render;
+    }
+
+    public static Renderer getRenderer() {
+        return render;
     }
 }

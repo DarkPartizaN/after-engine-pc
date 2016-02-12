@@ -3,7 +3,6 @@ package aftergames.engine.world;
 import aftergames.engine.EngineRuntime;
 import aftergames.engine.utils.geom.*;
 import aftergames.engine.sprite.Sprite;
-import aftergames.engine.render.Renderer;
 import aftergames.engine.utils.MathUtils;
 
 /**
@@ -26,9 +25,8 @@ public abstract class Entity {
     //Model
     protected Sprite sprite;
     //World parameters
-    public int layer; //Draw order
-    public float angle;
-    public float speed;
+    protected float angle;
+    protected float speed;
     protected Vector2 position = new Vector2(0, 0); //World position
     protected Vector2 old_position = new Vector2(0, 0);
     public Vector2 current_speed = new Vector2(0, 0);
@@ -38,26 +36,32 @@ public abstract class Entity {
     protected Shape cbox;
     protected Shape vbox;
     //Needs collision?
-    public boolean solid;
+    public boolean solid = true;
     public boolean trigger = false;
     public boolean checkworld = true; //Check out of world bounds
-    protected EntityPool collides = new EntityPool();
-    protected EntityPool touched = new EntityPool();
+    protected EntityPool collides;
+    protected EntityPool touched;
     //Objects in view field
-    protected EntityPool visible_objects = new EntityPool();
+    protected EntityPool visible_objects;
     //Name for triggers
-    public String name = new String();
+    public String name;
     //Parent system
-    protected EntityPool childs = new EntityPool();
+    protected EntityPool childs;
     protected Entity parent, target;
-    //Render system
-    public LightPool lights = new LightPool();
-    public boolean rendered = false;
 
     public Entity() {
+        name = "";
+
+        collides = new EntityPool();
+        touched = new EntityPool();
+        visible_objects = new EntityPool();
+        childs = new EntityPool();
+
         bbox = new Rect(0, 0, 0, 0);
         cbox = new Rect(0, 0, 0, 0);
         vbox = new Rect(0, 0, 0, 0);
+
+        sprite = Sprite.empty;
 
         checkCollisions();
     }
@@ -70,96 +74,6 @@ public abstract class Entity {
 
     public final Sprite getSprite() {
         return sprite;
-    }
-
-    public void render() {
-        if (nomodel || sprite == Sprite.empty_sprite || rendered) return;
-
-        Rect region = sprite.frames[sprite.getCurrentAnimation().getCurrentFrame()];
-
-        Renderer.setTexture(sprite.texture);
-
-        Renderer.begin(Renderer.R_QUAD);
-        {
-            Renderer.setTexCoords(region.x, region.y);
-            Renderer.setVertexCoords(bbox.getPoints()[0].x, bbox.getPoints()[0].y);
-            Renderer.setTexCoords(region.w, region.y);
-            Renderer.setVertexCoords(bbox.getPoints()[1].x, bbox.getPoints()[1].y);
-            Renderer.setTexCoords(region.w, region.h);
-            Renderer.setVertexCoords(bbox.getPoints()[2].x, bbox.getPoints()[2].y);
-            Renderer.setTexCoords(region.x, region.h);
-            Renderer.setVertexCoords(bbox.getPoints()[3].x, bbox.getPoints()[3].y);
-        }
-        Renderer.end();
-
-        Renderer.setTexture(null);
-    }
-
-    public Shape shadowbox = new Rect(0, 0, 0, 0);
-
-    public void renderShadow() {
-        if (nomodel || sprite == Sprite.empty_sprite || !hasTouch() || rendered) return;
-
-        lights.clear();
-        for (Entity e : touched.get_all()) if (e instanceof Light) lights.add((Light) e);
-
-        Rect region = sprite.frames[sprite.getCurrentAnimation().getCurrentFrame()];
-
-        for (Light l : lights.get_all()) {
-            Vector2 diff = position.sub(l.position);
-            Vector2 n;
-            float distance = diff.length();
-            float transparency = MathUtils.max(0, 0.8f - (distance / 255f));
-
-            Rect shadow = new Rect(0, 0, getWidth(), getHeight());
-
-            trans = Matrix.translate(-getWidth() / 2, -getHeight() / 2);
-            trans.transform(shadow);
-
-            trans = Matrix.rotate(angle);
-            trans.transform(shadow);
-
-            trans = Matrix.translate(getWorldX(), getWorldY());
-            trans.transform(shadow);
-
-            for (Point p : shadow.getPoints()) {
-                diff.x = p.x - l.getWorldX();
-                diff.y = p.y - l.getWorldY();
-
-                n = diff.normalize();
-                distance = diff.length() * 0.15f;
-
-                p.x += distance * n.x;
-                p.y += distance * n.y;
-            }
-
-            float y = 0.21f * l.color.r + 0.72f * l.color.g + 0.07f * l.color.b; //Handle light brihgtness
-
-            Renderer.current_shader.setUniform("u_color", 0, 0, 0, transparency * y);
-            Renderer.current_shader.setUniform("u_coloronly", true);
-
-            Renderer.setTexture(sprite.texture);
-
-            Renderer.begin(Renderer.R_QUAD);
-            {
-                Renderer.setTexCoords(region.x, region.y);
-                Renderer.setVertexCoords(shadow.getPoints()[0].x, shadow.getPoints()[0].y);
-                Renderer.setTexCoords(region.w, region.y);
-                Renderer.setVertexCoords(shadow.getPoints()[1].x, shadow.getPoints()[1].y);
-                Renderer.setTexCoords(region.w, region.h);
-                Renderer.setVertexCoords(shadow.getPoints()[2].x, shadow.getPoints()[2].y);
-                Renderer.setTexCoords(region.x, region.h);
-                Renderer.setVertexCoords(shadow.getPoints()[3].x, shadow.getPoints()[3].y);
-            }
-            Renderer.end();
-
-            shadowbox = shadow;
-        }
-
-        Renderer.current_shader.setUniform("u_color", 1f, 1f, 1f, 1f);
-        Renderer.current_shader.setUniform("u_coloronly", false);
-
-        Renderer.setTexture(null);
     }
 
     public void touch(Entity e) {
@@ -229,7 +143,7 @@ public abstract class Entity {
     }
 
     public final boolean hasModel() {
-        return !nomodel && sprite != null && sprite != Sprite.empty_sprite;
+        return !nomodel && sprite != null && sprite != Sprite.empty;
     }
 
     public final void checkCollisions() {
@@ -399,5 +313,17 @@ public abstract class Entity {
 
     public final Entity[] getCollides() {
         return collides.get_all();
+    }
+
+    public final EntityPool getTouched() {
+        return touched;
+    }
+
+    public final float getAngle() {
+        return angle;
+    }
+
+    public final float getSpeed() {
+        return speed;
     }
 }

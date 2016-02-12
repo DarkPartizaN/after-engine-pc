@@ -4,12 +4,11 @@ import aftergames.engine.Controllable;
 import aftergames.engine.EngineAPI;
 import aftergames.engine.EngineRuntime;
 import aftergames.engine.render.Color;
-import aftergames.engine.render.Renderer;
+import aftergames.engine.render.RenderAPI;
 import aftergames.engine.ui.UI;
 import aftergames.engine.ui.UIPanel;
 import aftergames.engine.ui.UIText;
 import aftergames.engine.utils.StringUtils;
-import aftergames.engine.world.Time;
 import java.util.Arrays;
 
 import java.util.LinkedHashSet;
@@ -66,12 +65,6 @@ public class Console extends UIPanel {
         add(carret);
 
         //Console commands
-        addCommand(r_debug);
-        addCommand(r_diffuse);
-        addCommand(r_lightning);
-        addCommand(r_shadows);
-        addCommand(r_grayscale);
-        addCommand(time);
         addCommand(cmdlist);
         addCommand(clear);
         addCommand(exit);
@@ -79,8 +72,8 @@ public class Console extends UIPanel {
     }
 
     public void onDraw() {
-        Renderer.clipRect(x, y, width, height);
-        Renderer.fillRect(0, (int) current_y, getWidth(), getHeight(), bg_color);
+        RenderAPI.clipRect(x, y, width, height);
+        RenderAPI.fillRect(0, (int) current_y, getWidth(), getHeight(), bg_color);
 
         //Draw tile background
         if (background != null) {
@@ -88,10 +81,10 @@ public class Console extends UIPanel {
             if (!resize_background) {
                 for (int tmp_y = y; tmp_y < height; tmp_y += background.getHeight())
                     for (int tmp_x = x; tmp_x < width; tmp_x += background.getWidth())
-                        Renderer.drawImage(background.getImage(), tmp_x, tmp_y);
+                        RenderAPI.drawImage(background.getImage(), tmp_x, tmp_y);
             } else
                 //or fit background
-                Renderer.drawImage(background.getImage(), x, y, width, height);
+                RenderAPI.drawImage(background.getImage(), x, y, width, height);
         }
 
         for (UI e : elements.get_all())
@@ -109,8 +102,8 @@ public class Console extends UIPanel {
             }
         }
 
-        Renderer.resetClip();
-        Renderer.drawLine(0, (int) (current_y + getHeight()), getWidth(), (int) (current_y + getHeight()), bg_line_color);
+        RenderAPI.resetClip();
+        RenderAPI.drawLine(0, (int) (current_y + getHeight()), getWidth(), (int) (current_y + getHeight()), bg_line_color);
     }
 
     public void onIdle() {
@@ -395,142 +388,6 @@ public class Console extends UIPanel {
 
         public void print() {
             info_print("Exiting app");
-        }
-    };
-
-    public ConsoleCommand r_lightning = new ConsoleCommand() {
-
-        public void init() {
-            name = "r_lightning";
-
-            args = new String[1];
-            args[0] = args[0] = (Renderer.r_lightning) ? "1" : "0";
-
-            desc = "On/off lights";
-        }
-
-        public void exec() {
-            if (args == null || args.length == 0) {
-                print();
-                return;
-            }
-
-            Renderer.r_lightning = args[0].toLowerCase().equals("1");
-        }
-    };
-
-    public ConsoleCommand r_grayscale = new ConsoleCommand() {
-
-        public void init() {
-            name = "r_grayscale";
-
-            args = new String[1];
-            args[0] = args[0] = (Renderer.r_grayscale) ? "1" : "0";
-
-            desc = "On/off grayscale mode";
-        }
-
-        public void exec() {
-            if (args == null || args.length == 0) {
-                print();
-                return;
-            }
-
-            Renderer.r_grayscale = args[0].toLowerCase().equals("1");
-        }
-    };
-
-    public ConsoleCommand r_diffuse = new ConsoleCommand() {
-
-        public void init() {
-            name = "r_diffuse";
-
-            args = new String[1];
-            args[0] = args[0] = (Renderer.r_diffuse) ? "1" : "0";
-
-            desc = "On/off objects drawing";
-        }
-
-        public void exec() {
-            if (args == null || args.length == 0) {
-                print();
-                return;
-            }
-
-            Renderer.r_diffuse = args[0].toLowerCase().equals("1");
-        }
-    };
-
-    public ConsoleCommand r_shadows = new ConsoleCommand() {
-
-        public void init() {
-            name = "r_shadows";
-
-            args = new String[1];
-            args[0] = args[0] = (Renderer.r_shadows) ? "1" : "0";
-
-            desc = "On/off shadows";
-        }
-
-        public void exec() {
-            if (args == null || args.length == 0) {
-                print();
-                return;
-            }
-
-            Renderer.r_shadows = args[0].toLowerCase().equals("1");
-        }
-    };
-
-    public ConsoleCommand r_debug = new ConsoleCommand() {
-
-        public void init() {
-            name = "r_debug";
-
-            args = new String[1];
-            args[0] = (Renderer.r_debug) ? "1" : "0";
-
-            desc = "Draw debug info";
-        }
-
-        public void exec() {
-            if (args == null || args.length == 0) {
-                print();
-                return;
-            }
-
-            Renderer.r_debug = args[0].toLowerCase().equals("1");
-        }
-
-        public void print() {
-            String out = StringUtils.concat(name, " ", StringUtils.arrayToString(args, " "));
-            info_print(out);
-        }
-    };
-
-    public ConsoleCommand time = new ConsoleCommand() {
-
-        public void init() {
-            name = "time";
-
-            args = new String[1];
-            args[0] = "0";
-
-            desc = "Set game time (hour only)";
-        }
-
-        public void exec() {
-            if (args == null || args.length == 0) {
-                print();
-                return;
-            }
-
-            Time.hours = Integer.parseInt(args[0]);
-            Time.minutes = 0;
-        }
-
-        public void print() {
-            info_print(StringUtils.concat("Time: ", Time.timeOfDay));
         }
     };
 

@@ -1,6 +1,6 @@
 package aftergames.engine.ui;
 
-import aftergames.engine.render.Renderer;
+import aftergames.engine.render.RenderAPI;
 
 /**
  *
@@ -23,7 +23,7 @@ public class UIText extends UIItem {
     }
 
     public void onDraw() {
-        if (!isEmpty()) Renderer.drawString(font, text, x, y, color);
+        if (!isEmpty()) RenderAPI.drawString(font, text, x, y, color);
     }
 
     public String getText() {

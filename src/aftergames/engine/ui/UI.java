@@ -2,6 +2,7 @@ package aftergames.engine.ui;
 
 import aftergames.engine.Controllable;
 import aftergames.engine.EngineRuntime;
+import aftergames.engine.ui.events.UIEventsStack;
 
 /**
  *
@@ -26,6 +27,7 @@ public abstract class UI {
     //Event system
     protected long last_event;
     protected long event_delay;
+    protected UIEventsStack events;
 
     public UI() {
         visible = true;

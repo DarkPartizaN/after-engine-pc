@@ -10,7 +10,7 @@ import static org.lwjgl.opengl.GL11.*;
 public final class Framebuffer implements RenderTarget {
 
     public int id;
-    private Texture tex;
+    private final Texture tex;
 
     public Framebuffer(int width, int height) {
         tex = new Texture(width, height);

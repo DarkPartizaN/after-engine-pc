@@ -92,4 +92,9 @@ public final class Shader {
         int loc = glGetUniformLocation(id, name);
         glUniform1i(loc, (value) ? 1 : 0);
     }
+
+    public void setUniform(String name, Color value) {
+        int loc = glGetUniformLocation(id, name);
+        glUniform4f(loc, value.r, value.g, value.b, value.a);
+    }
 }

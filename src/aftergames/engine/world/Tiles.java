@@ -2,7 +2,7 @@ package aftergames.engine.world;
 
 import aftergames.engine.EngineAPI;
 import aftergames.engine.utils.geom.Rect;
-import aftergames.engine.render.Renderer;
+import aftergames.engine.render.RenderAPI;
 import aftergames.engine.render.Texture;
 
 /**
@@ -38,7 +38,7 @@ public class Tiles {
                 u2 = u + (float) tile_width / texture.width;
                 v2 = v + (float) tile_height / texture.height;
 
-                tiles[tile++] = this.texture.getRegion(u, v, u2, v2);
+                tiles[tile++] = new Rect(u, v, u2, v2);
             }
         }
     }
@@ -111,8 +111,9 @@ public class Tiles {
         int tW = getTileWidth();
         int tH = getTileHeight();
 
-        Renderer.setTexture(texture);
-        Renderer.begin(Renderer.R_QUAD);
+        RenderAPI.setTexture(texture);
+
+        RenderAPI.begin(RenderAPI.R_QUAD);
         {
             for (int row = 0; row < getRows(); row++, tY += tH) {
                 if (tY < cY - tH) continue;
@@ -126,18 +127,18 @@ public class Tiles {
 
                     if ((tileIndex = getTile(row, column)) == 0) continue;
 
-                    Renderer.setTexCoords(tiles[tileIndex].x, tiles[tileIndex].y);
-                    Renderer.setVertexCoords(tX, tY);
-                    Renderer.setTexCoords(tiles[tileIndex].w, tiles[tileIndex].y);
-                    Renderer.setVertexCoords(tX + tW, tY);
-                    Renderer.setTexCoords(tiles[tileIndex].w, tiles[tileIndex].h);
-                    Renderer.setVertexCoords(tX + tW, tY + tH);
-                    Renderer.setTexCoords(tiles[tileIndex].x, tiles[tileIndex].h);
-                    Renderer.setVertexCoords(tX, tY + tH);
+                    RenderAPI.setTexCoords(tiles[tileIndex].x, tiles[tileIndex].y);
+                    RenderAPI.setVertexCoords(tX, tY);
+                    RenderAPI.setTexCoords(tiles[tileIndex].w, tiles[tileIndex].y);
+                    RenderAPI.setVertexCoords(tX + tW, tY);
+                    RenderAPI.setTexCoords(tiles[tileIndex].w, tiles[tileIndex].h);
+                    RenderAPI.setVertexCoords(tX + tW, tY + tH);
+                    RenderAPI.setTexCoords(tiles[tileIndex].x, tiles[tileIndex].h);
+                    RenderAPI.setVertexCoords(tX, tY + tH);
                 }
             }
         }
-        Renderer.end();
+        RenderAPI.end();
     }
 
     public Texture getTexture() {

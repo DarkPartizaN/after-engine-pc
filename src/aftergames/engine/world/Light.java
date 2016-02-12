@@ -4,7 +4,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 import aftergames.engine.EngineRuntime;
 import aftergames.engine.render.Color;
-import aftergames.engine.render.Renderer;
+import aftergames.engine.render.RenderAPI;
 import aftergames.engine.utils.MathUtils;
 
 /**
@@ -23,8 +23,6 @@ public class Light extends Entity {
 
     public Light(int type) {
         this.type = type;
-
-        if (type == AMBIENT) layer = -1;
     }
 
     public void init() {
@@ -87,19 +85,19 @@ public class Light extends Entity {
             float precize = cbox.getPoints().length;
             float delta = 360f / precize;
 
-            Renderer.begin(Renderer.R_TRI_FAN);
+            RenderAPI.begin(RenderAPI.R_TRI_FAN);
             {
-                Renderer.setColor(color);
-                Renderer.setVertexCoords(position);
+                RenderAPI.setColor(color);
+                RenderAPI.setVertexCoords(position);
 
-                Renderer.setColor(Color.black);
+                RenderAPI.setColor(Color.black);
 
                 for (float a = 0; a <= 360; a += delta)
-                    Renderer.setVertexCoords(getWorldX() + distance * MathUtils.cos(a), getWorldY() + distance * MathUtils.sin(a));
+                    RenderAPI.setVertexCoords(getWorldX() + distance * MathUtils.cos(a), getWorldY() + distance * MathUtils.sin(a));
 
-                Renderer.setVertexCoords(getWorldX() + distance, getWorldY());
+                RenderAPI.setVertexCoords(getWorldX() + distance, getWorldY());
             }
-            Renderer.end();
+            RenderAPI.end();
         }
 
         if (type == Light.CONE) {
@@ -108,11 +106,11 @@ public class Light extends Entity {
 
             glBegin(GL_TRIANGLE_FAN);
             {
-                Renderer.setColor(color);
+                RenderAPI.setColor(color);
 
                 glVertex2d(getWorldX() + 5, getWorldY());
 
-                Renderer.setColor(Color.black);
+                RenderAPI.setColor(Color.black);
 
                 for (float a = angle; a <= angle + radius; a += delta)
                     glVertex2d(getWorldX() + distance * MathUtils.cos(a), getWorldY() + distance * MathUtils.sin(a));
@@ -120,7 +118,7 @@ public class Light extends Entity {
             glEnd();
         }
 
-        Renderer.setColor(Color.white);
+        RenderAPI.setColor(Color.white);
     }
 
     public void setColor(Color c) {

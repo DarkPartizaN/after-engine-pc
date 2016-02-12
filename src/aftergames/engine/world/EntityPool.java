@@ -9,7 +9,7 @@ public class EntityPool {
     private Entity[] e;
     private Entity[] e_tmp;
     private int size = 0;
-    private int initialSize = 10;
+    private final int initialSize = 10;
 
     public EntityPool() {
         e = new Entity[initialSize];

@@ -1,7 +1,7 @@
 package aftergames.engine.ui;
 
 import aftergames.engine.render.Color;
-import aftergames.engine.render.Renderer;
+import aftergames.engine.render.RenderAPI;
 
 /**
  *
@@ -43,8 +43,8 @@ public class UIItem extends UI {
 
         sort();
 
-        Renderer.clipRect(x, y, width, height);
-        Renderer.fillRect(x, y, width, height, background_color);
+        RenderAPI.clipRect(x, y, width, height);
+        RenderAPI.fillRect(x, y, width, height, background_color);
 
         for (UI e : elements.get_all())
             if (e != null)
@@ -52,7 +52,7 @@ public class UIItem extends UI {
 
         onDraw();
 
-        Renderer.resetClip();
+        RenderAPI.resetClip();
     }
 
     protected void sort() {

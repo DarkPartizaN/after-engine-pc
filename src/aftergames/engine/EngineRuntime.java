@@ -1,5 +1,6 @@
 package aftergames.engine;
 
+import aftergames.engine.render.RenderAPI;
 import aftergames.engine.ui.console.Console;
 import aftergames.engine.utils.geom.Matrix;
 import aftergames.engine.utils.geom.Point;
@@ -20,8 +21,8 @@ public final class EngineRuntime {
     public static float screen_aspect;
     public static float frametime; //For correct work with different FPS
 
-    private static Rect mouse_rect = new Rect(0, 0, 8, 8);
-    private static Rect mouse_world_rect = new Rect(0, 0, 8, 8);
+    private static final Rect mouse_rect = new Rect(0, 0, 8, 8);
+    private static final Rect mouse_world_rect = new Rect(0, 0, 8, 8);
     private static Point mouse_pos = new Point(0, 0);
     private static Point old_mouse_pos = new Point(0, 0);
     private static Vector2 mouse_world = new Vector2(); //Mouse position in world coordinates
@@ -116,6 +117,7 @@ public final class EngineRuntime {
     }
 
     public static void updateMouseWorldPos() {
+        if (EngineAPI.getWorld() == null) return;
         Camera cam = EngineAPI.getWorld().getCamera();
 
         mouse_world.x = mouse_pos.x + cam.getWorldX();

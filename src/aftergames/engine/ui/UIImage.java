@@ -1,6 +1,6 @@
 package aftergames.engine.ui;
 
-import aftergames.engine.render.Renderer;
+import aftergames.engine.render.RenderAPI;
 import aftergames.engine.render.Texture;
 
 /**
@@ -17,7 +17,7 @@ public final class UIImage extends UIItem {
     }
 
     public void onDraw() {
-        if (texture != null) Renderer.drawImage(texture, x, y);
+        if (texture != null) RenderAPI.drawImage(texture, x, y);
     }
 
     public void setImage(Texture image) {

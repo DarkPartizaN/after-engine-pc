@@ -1,7 +1,7 @@
 package aftergames.engine.ui;
 
 import aftergames.engine.EngineRuntime;
-import aftergames.engine.render.Renderer;
+import aftergames.engine.render.RenderAPI;
 
 /**
  *
@@ -18,19 +18,19 @@ public class UICursor extends UIItem {
     }
 
     public void draw() {
-        Renderer.resetClip();
+        RenderAPI.resetClip();
 
         if (image != null)
-            Renderer.drawImage(image.getImage(), x, y);
+            RenderAPI.drawImage(image.getImage(), x, y);
         else
             onDraw();
     }
 
     public void onDraw() {
-        Renderer.drawPoint(x, y, color);
-        Renderer.drawLine(x, y, x, y + 10, color);
-        Renderer.drawLine(x, y, x + 10, y, color);
-        Renderer.drawLine(x, y, x + 10, y + 10, color);
+        RenderAPI.drawPoint(x, y, color);
+        RenderAPI.drawLine(x, y, x, y + 10, color);
+        RenderAPI.drawLine(x, y, x + 10, y, color);
+        RenderAPI.drawLine(x, y, x + 10, y + 10, color);
     }
 
     public void onMouseMove() {

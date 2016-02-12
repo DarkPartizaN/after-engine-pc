@@ -3,12 +3,12 @@ package aftergames.engine;
 import static aftergames.engine.EngineRuntime.console;
 
 import aftergames.engine.render.Color;
-import aftergames.engine.render.Renderer;
+import aftergames.engine.render.RenderAPI;
 import aftergames.engine.ui.UIManager;
 import aftergames.engine.utils.ResourceUtils;
 import aftergames.engine.utils.StringUtils;
 import aftergames.engine.utils.pools.IntPool;
-import aftergames.engine.world.Time;
+import aftergames.engine.world.Timer;
 import aftergames.engine.world.World;
 
 import java.text.SimpleDateFormat;
@@ -21,7 +21,7 @@ import java.util.Date;
 public final class Engine {
 
     //Engine states
-    public static final int IN_CREATED = -1, IN_PAUSED = 0, IN_STOPING = 1, IN_GAME = 2, IN_DEAD = 3;
+    public static final int IN_CREATED = -1, IN_PAUSED = 0, IN_RUNNING = 1, IN_STOPING = 2, IN_DEAD = 3;
     private final IntPool states = new IntPool();
     //FPS
     public static boolean show_fps = true;
@@ -41,21 +41,21 @@ public final class Engine {
 
     void start(World world) {
         //Time
-        Time.checkTime();
-        //World
+        Timer.tick();
+
         this.world = world;
 
-        setState(IN_GAME);
+        setState(IN_RUNNING);
     }
 
     void frame() {
         if (states.get_last() == IN_DEAD) return;
 
         long currentFrameTime = System.currentTimeMillis();
-        Renderer.clear();
+        RenderAPI.clear();
 
         switch (states.get_last()) {
-            case IN_GAME:
+            case IN_RUNNING:
                 processGame();
                 break;
             case IN_PAUSED:
@@ -67,14 +67,9 @@ public final class Engine {
         }
 
         //World mouse position
-        if (world != null) {
-            if (world.getCamera() != null) {
-                Renderer.setCamera(world.getCamera());
-                EngineRuntime.updateMouseWorldPos();
-            }
-        }
+        EngineRuntime.updateMouseWorldPos();
 
-        Renderer.setOrtho(EngineRuntime.screen_width, EngineRuntime.screen_height);
+        RenderAPI.setOrtho(EngineRuntime.screen_width, EngineRuntime.screen_height);
 
         //UI
         processUI();
@@ -114,7 +109,7 @@ public final class Engine {
             else
                 fps_color = Color.green;
 
-            Renderer.drawString(StringUtils.concat("FPS:", String.valueOf(fps)), 2, 2, fps_color);
+            RenderAPI.drawString(StringUtils.concat("FPS:", String.valueOf(fps)), 2, 2, fps_color);
         }
 
         //Delta time
@@ -133,11 +128,17 @@ public final class Engine {
 
     private void processGame() {
         //Time
-        Time.checkTime();
+        Timer.tick();
 
         //World
         world.update();
-        world.render();
+
+        //Renderer
+        if (EngineAPI.getRenderer() != null) {
+            EngineAPI.getRenderer().preRender();
+            EngineAPI.getRenderer().render();
+            EngineAPI.getRenderer().postRender();
+        }
     }
 
     private void processUI() {

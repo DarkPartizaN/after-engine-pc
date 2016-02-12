@@ -20,7 +20,7 @@ public class Sprite {
     private boolean flip_x = false, flip_y = false;
 
     //Non-textured model for triggers
-    public final static Sprite empty_sprite = new Sprite(0, 0);
+    public final static Sprite empty = new Sprite(0, 0);
 
     public Sprite(int width, int height) {
         frame_width = width;
@@ -44,7 +44,7 @@ public class Sprite {
                 u2 = u + (float) frame_width / texture.width;
                 v2 = v + (float) frame_height / texture.height;
 
-                frames[tile++] = texture.getRegion(u, v, u2, v2);
+                frames[tile++] = new Rect(u, v, u2, v2);
             }
         }
 
